@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+<title>Employees</title>
+</head>
+<body>
+<h1>Employees</h1>
+<a href="/ui/employees/add">Add Employee</a>
+<table border="1">
+    <tr>
+        <th>ID</th><th>Name</th><th>Email</th><th>Department</th><th>Salary</th><th>Actions</th>
+    </tr>
+    <tr th:each="emp : ${employees}">
+        <td th:text="${emp.id}"></td>
+        <td th:text="${emp.name}"></td>
+        <td th:text="${emp.email}"></td>
+        <td th:text="${emp.department}"></td>
+        <td th:text="${emp.salary}"></td>
+        <td>
+            <a th:href="@{'/ui/employees/edit/' + ${emp.id}}">Edit</a> |
+            <a th:href="@{'/ui/employees/delete/' + ${emp.id}}">Delete</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>

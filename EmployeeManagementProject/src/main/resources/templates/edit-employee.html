@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Edit Employee</title>
+<head>
+    <meta charset="UTF-8">
+    <title>Employee Management</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+<h1>Edit Employee</h1>
+<form th:action="@{/ui/employees/edit}" th:object="${employee}" method="post">
+
+    <input type="hidden" name="id" th:value="${id}" />
+
+    <input type="text" th:field="*{name}" />
+    <input type="email" th:field="*{email}" />
+    <input type="text" th:field="*{department}" />
+    <input type="number" th:field="*{salary}" />
+
+    <button type="submit">Update</button>
+</form>
+
+<a href="/ui/employees">Back to List</a>
+</body>
+</html>
