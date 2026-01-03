@@ -32,6 +32,9 @@ A Back-End Employee Management System with Simple UI(Thymeleaf) developed during
 - Pagination & validation
 - Real-world error handling
 
+<img width="1269" height="393" alt="EmpList" src="https://github.com/user-attachments/assets/447a54f5-077a-4da9-b1e9-4d423de22fa0" />
 
+<img width="1289" height="422" alt="AddEmp" src="https://github.com/user-attachments/assets/d203dd95-a6d3-4da3-9055-edeffbb5f543" />
 
-![image alt] (https://github.com/atish2802/employee-management-portal/blob/main/EmployeeManagementProject/EmpList.PNG?raw=true)
+<img width="1149" height="317" alt="EditEmp" src="https://github.com/user-attachments/assets/a628862e-f3b6-4a2c-998b-1adb5c99a3ad" />
+
