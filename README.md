@@ -32,3 +32,6 @@ A Back-End Employee Management System with Simple UI(Thymeleaf) developed during
 - Pagination & validation
 - Real-world error handling
 
+
+
+![image alt] (https://github.com/atish2802/employee-management-portal/blob/main/EmployeeManagementProject/EmpList.PNG?raw=true)
