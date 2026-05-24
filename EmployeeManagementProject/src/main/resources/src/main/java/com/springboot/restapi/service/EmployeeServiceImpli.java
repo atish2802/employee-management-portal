@@ -1,97 +1,65 @@
 package com.springboot.restapi.service;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.springboot.restapi.dto.RequestDTO;
 import com.springboot.restapi.dto.ResponseDTO;
 import com.springboot.restapi.entity.Employee;
-import com.springboot.restapi.entity.User;
 import com.springboot.restapi.repository.EmployeeRepo;
-import com.springboot.restapi.repository.UserRepository;
 
 @Service
 public class EmployeeServiceImpli implements EmployeeService {
-
-	@Autowired
-	private UserRepository userRepository;
-
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-
+	
 	@Autowired
 	private EmployeeRepo repo;
 
+	@Override
 	public ResponseDTO createEmployee(RequestDTO requestDto) {
-
+		
 		Employee employee = new Employee();
-
 		employee.setName(requestDto.getName());
-
 		employee.setEmail(requestDto.getEmail());
-
 		employee.setDepartment(requestDto.getDepartment());
-
-		employee.setSalary(requestDto.getSalary());
+		employee.setSalary(requestDto.getSalary());		
 
 		Employee save = repo.save(employee);
-
-		User user = new User();
-
-		user.setUsername(requestDto.getUsername());
-
-		user.setPassword(
-
-				passwordEncoder.encode(requestDto.getPassword())
-
-		);
-
-		user.setRole("USER");
-
-		user.setEmployee(save);
-
-		userRepository.save(user);
-
+		
 		ResponseDTO dto = new ResponseDTO();
-
+		
 		dto.setId(save.getId());
-
 		dto.setName(save.getName());
-
 		dto.setEmail(save.getEmail());
-
 		dto.setDepartment(save.getDepartment());
-
 		dto.setSalary(save.getSalary());
-
+		
+		
 		return dto;
+		
 	}
 
 	@Override
 	public ResponseDTO getById(Integer id) {
-
+		
 		Employee employee = repo.findById(id).orElseThrow(() -> new RuntimeException("Id not found"));
-
+		
 		ResponseDTO dto = new ResponseDTO();
 		dto.setId(employee.getId());
 		dto.setName(employee.getName());
 		dto.setEmail(employee.getEmail());
 		dto.setDepartment(employee.getDepartment());
 		dto.setSalary(employee.getSalary());
-
-		return dto;
+		
+		return dto ;
 	}
 
 	@Override
 	public Page<ResponseDTO> getAllEmployee(Pageable pageable) {
-
+		
 		Page<Employee> page = repo.findAll(pageable);
-
+		
 		Page<ResponseDTO> dtoPage = page.map(employee -> {
 			ResponseDTO dto = new ResponseDTO();
 			dto.setId(employee.getId());
@@ -99,108 +67,41 @@ public class EmployeeServiceImpli implements EmployeeService {
 			dto.setEmail(employee.getEmail());
 			dto.setDepartment(employee.getDepartment());
 			dto.setSalary(employee.getSalary());
-
-			return dto;
+			
+			return  dto;
 		});
-
+		
 		return dtoPage;
 	}
 
 	@Override
 	public ResponseDTO updateEmployee(Integer id, RequestDTO requestDTO) {
-
+		
 		Employee employee = repo.findById(id).orElseThrow(() -> new RuntimeException("Id not found"));
 		employee.setName(requestDTO.getName());
 		employee.setEmail(requestDTO.getEmail());
 		employee.setDepartment(requestDTO.getDepartment());
 		employee.setSalary(requestDTO.getSalary());
-
+		
 		Employee save = repo.save(employee);
-
+		
 		ResponseDTO dto = new ResponseDTO();
 		dto.setId(save.getId());
 		dto.setName(save.getName());
 		dto.setEmail(save.getEmail());
 		dto.setDepartment(save.getDepartment());
 		dto.setSalary(save.getSalary());
-
+			
 		return dto;
 	}
 
 	@Override
 	public void deleteEmployee(Integer id) {
-
+		
 		Employee emp = repo.findById(id).orElseThrow(() -> new RuntimeException("Id not found !"));
-
-		repo.delete(emp);
-
-	}
-
-	public List<ResponseDTO> searchEmployee(String name) {
-
-		List<Employee> employees = repo.findByNameContaining(name);
-
-		return employees.stream().map(emp -> new ResponseDTO(emp.getId(), emp.getName(), emp.getEmail(),
-				emp.getDepartment(), emp.getSalary())).toList();
-	}
-
-	@Override
-	public Object filterEmployee(String type, String value) {
-
-		switch (type) {
-
-		case "id":
-
-			return List.of(getById(Integer.parseInt(value)));
-
-		case "name":
-			return searchEmployee(value);
-
-		case "email":
-
-			Employee emailEmp = repo.findByEmail(value).orElseThrow(() -> new RuntimeException("Employee not found"));
-
-			return List.of(new ResponseDTO(emailEmp.getId(), emailEmp.getName(), emailEmp.getEmail(),
-					emailEmp.getDepartment(), emailEmp.getSalary()));
-
-		case "department":
-
-			return repo.findByDepartmentContaining(value).stream().map(emp -> new ResponseDTO(emp.getId(),
-					emp.getName(), emp.getEmail(), emp.getDepartment(), emp.getSalary())).toList();
-
-		case "salary":
-
-			return repo.findBySalary(Double.parseDouble(value)).stream().map(emp -> new ResponseDTO(emp.getId(),
-					emp.getName(), emp.getEmail(), emp.getDepartment(), emp.getSalary())).toList();
-
-		default:
-			throw new RuntimeException("Invalid search");
-
-		}
-
-	}
-
-	@Override
-	public ResponseDTO getEmployeeByUsername(String username) {
-
-		User user = userRepository.findByUsername(username).orElseThrow();
-
-		Employee employee = user.getEmployee();
-
-		ResponseDTO response = new ResponseDTO();
-
-		response.setId(employee.getId());
-
-		response.setName(employee.getName());
-
-		response.setEmail(employee.getEmail());
-
-		response.setDepartment(employee.getDepartment());
-
-		response.setSalary(employee.getSalary());
-
-		return response;
-
+		
+		repo.delete(emp);	
+		
 	}
 
 }

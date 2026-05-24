@@ -1,0 +1,13 @@
+.metadata/
+target/
+bin/
+
+EmployeeManagementProject/target/
+EmployeeManagementProject/.settings/
+EmployeeManagementProject/.classpath
+EmployeeManagementProject/.project
+
+*.class
+*.log
+hs_err_pid*
+.idea/

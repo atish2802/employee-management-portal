@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+
+<style>
+body {
+	font-family: Arial;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+}
+
+.container {
+	width: 300px;
+	padding: 20px;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+input, button {
+	width: 100%;
+	padding: 10px;
+	margin-top: 10px;
+}
+</style>
+
+</head>
+
+<body>
+
+	<div class="container">
+
+		<h2>Login</h2>
+
+		<input type="text" id="username" placeholder="Username"> <input
+			type="password" id="password" placeholder="Password">
+
+		<button onclick="login()">Login</button>
+
+		<p id="message"></p>
+
+	</div>
+
+	<script>
+
+console.log("Login script loaded");
+
+async function login() {
+
+    console.log("login clicked");
+
+    let username = document.getElementById("username").value;
+    let password = document.getElementById("password").value;
+
+    try {
+
+        let response = await fetch("/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ username, password })
+        });
+
+        if (!response.ok) {
+            document.getElementById("message").innerText = "Invalid Credentials";
+            return;
+        }
+
+        let data = await response.json();
+
+        let token = data.token || data.jwt || data.accessToken;
+
+        if (!token) {
+            console.log(data);
+            document.getElementById("message").innerText = "No token returned";
+            return;
+        }
+
+        localStorage.setItem(
+        		"token",
+        		token
+        		);
+
+        		let payload=
+        		JSON.parse(
+        		atob(
+        		token.split(".")[1]
+        		)
+        		);
+
+        		console.log(payload);
+
+        		localStorage.setItem(
+        		"role",
+        		payload.role
+        		);
+
+        		window.location.href=
+        		"/dashboard";
+        
+
+    } catch (error) {
+        console.log(error);
+        document.getElementById("message").innerText = "Server error";
+    }
+}
+
+</script>
+
+</body>
+</html>

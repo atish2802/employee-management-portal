@@ -3,25 +3,153 @@
 <head>
 <meta charset="UTF-8">
 <title>Edit Employee</title>
-<head>
-    <meta charset="UTF-8">
-    <title>Employee Management</title>
-    <link rel="stylesheet" th:href="@{/css/style.css}">
 </head>
+
 <body>
-<h1>Edit Employee</h1>
-<form th:action="@{/ui/employees/edit}" th:object="${employee}" method="post">
 
-    <input type="hidden" name="id" th:value="${id}" />
+	<h2>Edit Employee</h2>
 
-    <input type="text" th:field="*{name}" />
-    <input type="email" th:field="*{email}" />
-    <input type="text" th:field="*{department}" />
-    <input type="number" th:field="*{salary}" />
+	<input type="hidden" id="id">
 
-    <button type="submit">Update</button>
-</form>
+	<input type="text" id="name" placeholder="Name">
 
-<a href="/ui/employees">Back to List</a>
+	<br>
+	<br>
+
+	<input type="email" id="email" placeholder="Email">
+
+	<br>
+	<br>
+
+	<input type="text" id="department" placeholder="Department">
+
+	<br>
+	<br>
+
+	<input type="number" id="salary" placeholder="Salary">
+
+	<br>
+	<br>
+
+	<button onclick="updateEmployee()">Update</button>
+
+	<script>
+
+const params =
+new URLSearchParams(
+window.location.search
+);
+
+const id=params.get("id");
+
+loadEmployee();
+
+
+function loadEmployee(){
+
+let token=
+localStorage.getItem("token");
+
+fetch(
+"/employee/"+id,
+{
+
+headers:{
+"Authorization":
+"Bearer "+token
+}
+
+}
+)
+
+.then(response=>response.json())
+
+.then(data=>{
+
+document.getElementById(
+"id").value=data.id;
+
+document.getElementById(
+"name").value=data.name;
+
+document.getElementById(
+"email").value=data.email;
+
+document.getElementById(
+"department").value=data.department;
+
+document.getElementById(
+"salary").value=data.salary;
+
+});
+
+}
+
+
+function updateEmployee(){
+
+let token=
+localStorage.getItem("token");
+
+let employee={
+
+name:
+document.getElementById(
+"name").value,
+
+email:
+document.getElementById(
+"email").value,
+
+department:
+document.getElementById(
+"department").value,
+
+salary:
+parseFloat(
+document.getElementById(
+"salary").value)
+
+};
+
+
+fetch(
+"/employee/"+id,
+{
+
+method:"PUT",
+
+headers:{
+
+"Content-Type":
+"application/json",
+
+"Authorization":
+"Bearer "+token
+
+},
+
+body:
+JSON.stringify(employee)
+
+}
+
+)
+
+.then(()=>{
+
+alert(
+"Updated Successfully"
+);
+
+window.location.href=
+"/dashboard";
+
+});
+
+}
+
+</script>
+
 </body>
 </html>

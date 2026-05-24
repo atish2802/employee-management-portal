@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+<meta charset="UTF-8">
+<title>Dashboard</title>
+
+<style>
+body {
+	font-family: Arial, sans-serif;
+	margin: 0;
+	padding: 20px;
+	background: #f4f6f9;
+}
+
+.header {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	margin-bottom: 20px;
+}
+
+.card {
+	background: white;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow: 0px 2px 10px rgba(0, 0, 0, .1);
+}
+
+input, select {
+	padding: 10px;
+	margin-right: 10px;
+	border-radius: 5px;
+	border: 1px solid #ddd;
+}
+
+button {
+	padding: 10px 15px;
+	border: none;
+	border-radius: 5px;
+	cursor: pointer;
+	margin: 5px;
+}
+
+table {
+	width: 100%;
+	border-collapse: collapse;
+	margin-top: 20px;
+	background: white;
+}
+
+th {
+	background: #333;
+	color: white;
+}
+
+th, td {
+	padding: 12px;
+	border-bottom: 1px solid #ddd;
+	text-align: center;
+}
+
+#pagination {
+	margin-top: 20px;
+	text-align: center;
+}
+</style>
+
+</head>
+
+<body>
+
+	<div class="header">
+
+		<h1>Employee Dashboard</h1>
+
+		<div style="display: flex; align-items: center; gap: 10px;">
+
+			<div id="userButtons"
+				style="display: none; gap: 10px; align-items: center;">
+				<button onclick="myProfile()">My Profile</button>
+
+			</div>
+
+			<button onclick="logout()">Logout</button>
+
+		</div>
+
+	</div>
+
+
+	<div class="card">
+
+		<div id="adminButtons">
+
+			<input type="text" id="searchValue" placeholder="Search"> <select
+				id="searchType">
+
+				<option value="name">Name</option>
+				<option value="id">ID</option>
+				<option value="email">Email</option>
+				<option value="department">Department</option>
+				<option value="salary">Salary</option>
+
+			</select>
+
+			<button onclick="searchEmployee()">Search</button>
+
+			<button onclick="loadEmployees()">Load Employees</button>
+
+			<button onclick="addEmployee()">Add Employee</button>
+
+		</div>
+
+		<br>
+
+		<div id="result"></div>
+
+		<div id="pagination"></div>
+
+	</div>
+
+
+	<script>
+
+window.onload=function(){
+
+let token=
+localStorage.getItem(
+"token"
+);
+
+let payload=
+JSON.parse(
+atob(
+token.split(".")[1]
+)
+);
+
+let role=
+payload.role;
+
+if(role==="USER"){
+
+	document.getElementById(
+	"adminButtons"
+	).style.display=
+	"none";
+
+	document.getElementById(
+	"userButtons"
+	).style.display=
+	"flex";
+
+	document.querySelector(
+	"h1"
+	).innerText=
+	"User Dashboard";
+
+	}
+	else{
+
+	document.querySelector(
+	"h1"
+	).innerText=
+	"Admin Dashboard";
+
+	}
+	
+console.log(
+"Role:",
+role
+);
+
+
+
+}
+
+
+
+async function myProfile(){
+
+let token=
+localStorage.getItem(
+"token"
+);
+
+try{
+
+let response=
+await fetch(
+"/employee/me",
+{
+
+headers:{
+"Authorization":
+"Bearer "+token
+}
+
+}
+
+);
+
+let data=
+await response.json();
+
+document.getElementById(
+"result"
+).innerHTML=`
+
+<div style="
+width:400px;
+margin:auto;
+padding:20px;
+background:white;
+border-radius:10px;
+box-shadow:0px 0px 10px rgba(0,0,0,.2);
+">
+
+<h2>My Profile</h2>
+
+<hr>
+
+<p><b>ID:</b> ${data.id}</p>
+
+<p><b>Name:</b> ${data.name}</p>
+
+<p><b>Email:</b> ${data.email}</p>
+
+<p><b>Department:</b> ${data.department}</p>
+
+<p><b>Salary:</b> ${data.salary}</p>
+
+</div>
+
+`;
+
+}
+catch(error){
+
+console.log(error);
+
+}
+
+}
+
+
+async function loadEmployees(page=0){
+
+let token=
+localStorage.getItem(
+"token"
+);
+
+let response=
+await fetch(
+"/employee?page="+page+"&size=5",
+{
+
+headers:{
+"Authorization":
+"Bearer "+token
+}
+
+}
+
+);
+
+let data=
+await response.json();
+
+renderTable(
+data.content
+);
+
+renderPagination(
+data.totalPages,
+data.number
+);
+
+}
+
+
+function searchEmployee(){
+
+let value=
+document.getElementById(
+"searchValue"
+).value.trim();
+
+if(value===""){
+
+alert(
+"Please enter value"
+);
+
+return;
+
+}
+
+let type=
+document.getElementById(
+"searchType"
+).value;
+
+let token=
+localStorage.getItem(
+"token"
+);
+
+fetch(
+"/employee/search/filter?type="
++type+
+"&value="
++value,
+{
+
+headers:{
+
+"Authorization":
+"Bearer "+token
+
+}
+
+}
+
+)
+
+.then(response=>response.json())
+
+.then(data=>{
+
+if(!Array.isArray(data)){
+
+data=[data];
+
+}
+
+renderTable(data);
+
+});
+
+}
+
+
+function renderTable(employees){
+
+let table=`
+
+<table>
+
+<tr>
+
+<th>ID</th>
+<th>Name</th>
+<th>Email</th>
+<th>Department</th>
+<th>Salary</th>
+<th>Action</th>
+
+</tr>
+
+`;
+
+employees.forEach(emp=>{
+
+table+=`
+
+<tr>
+
+<td>${emp.id}</td>
+<td>${emp.name}</td>
+<td>${emp.email}</td>
+<td>${emp.department}</td>
+<td>${emp.salary}</td>
+
+<td>
+
+<button onclick="editEmployee(${emp.id})">
+
+Edit
+
+</button>
+
+<button onclick="deleteEmployee(${emp.id})">
+
+Delete
+
+</button>
+
+</td>
+
+</tr>
+
+`;
+
+});
+
+table+="</table>";
+
+document.getElementById(
+"result"
+).innerHTML=
+table;
+
+}
+
+
+function renderPagination(totalPages){
+
+let buttons="";
+
+for(let i=0;i<totalPages;i++){
+
+buttons+=`
+
+<button onclick="loadEmployees(${i})">
+
+${i+1}
+
+</button>
+
+`;
+
+}
+
+document.getElementById(
+"pagination"
+).innerHTML=
+buttons;
+
+}
+
+
+function addEmployee(){
+
+window.location.href=
+"/add-employee";
+
+}
+
+function editEmployee(id){
+
+	window.location.href=
+	"/edit-employee?id="+id;
+
+	}
+
+async function deleteEmployee(id){
+
+let token=
+localStorage.getItem(
+"token"
+);
+
+await fetch(
+"/employee/"+id,
+{
+
+method:"DELETE",
+
+headers:{
+"Authorization":
+"Bearer "+token
+}
+
+}
+
+);
+
+loadEmployees();
+
+}
+
+function logout(){
+
+localStorage.clear();
+
+window.location.href=
+"/login";
+
+}
+
+</script>
+
+</body>
+</html>

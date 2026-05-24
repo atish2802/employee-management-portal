@@ -4,25 +4,21 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
 public class RequestDTO {
-
+	
 	private Integer id;
-
+	
 	@NotBlank(message = "This field is mendatory ")
 	private String name;
-
+	
 	@Email(message = "Email format is wrong")
 	@NotBlank(message = "This field is mendatory ")
 	private String email;
-
+	
 	@NotBlank(message = "This field is mendatory ")
 	private String department;
-
+	
 	private double salary;
-
-	private String username;
-
-	private String password;
-
+	
 	public Integer getId() {
 		return id;
 	}
@@ -63,28 +59,13 @@ public class RequestDTO {
 		this.salary = salary;
 	}
 
-	public String getUsername() {
-		return username;
-	}
-
-	public void setUsername(String username) {
-		this.username = username;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public RequestDTO(Integer id, @NotBlank(message = "This field is mendatory ") String name,
+	public RequestDTO(
+			Integer id,@NotBlank(message = "This field is mendatory ") String name,
 			@Email(message = "Email format is wrong") @NotBlank(message = "This field is mendatory ") String email,
 			@NotBlank(message = "This field is mendatory ") String department,
 			@NotBlank(message = "This field is mendatory ") double salary) {
 		super();
-		this.id = id;
+		this.id=id;
 		this.name = name;
 		this.email = email;
 		this.department = department;
@@ -98,8 +79,10 @@ public class RequestDTO {
 
 	@Override
 	public String toString() {
-		return "RequestDTO [id=" + id + "name=" + name + ", email=" + email + ", department=" + department + ", salary="
-				+ salary + "]";
+		return "RequestDTO [id=" + id + "name=" + name + ", email=" + email + ", department=" + department + ", salary=" + salary
+				+ "]";
 	}
-
+	
+	
+	
 }
